@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Workshop</title>
+  <link rel="stylesheet" type="text/css" href="css/base.css" />
+</head>
+<body>
+    <div id="root"></div>
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <script>
+        const Content = () => React.createElement('div', { className: 'content' },
+            [
+                React.createElement('h2', null, 'Details for accessing the api'),
+                React.createElement('div', { className: 'sectionHeading'}, 'Step 1. Define the API URL'),
+                React.createElement('input', { type: 'text', placeholder: 'http://sample.com'  }),
+                React.createElement('h3', null, 'Your URL is made up of these parts'),
+                React.createElement('p', null, 'Indicate which parts of the url will be controlled by the user using the buttons below.'),
+                React.createElement('table', null,
+                    React.createElement('thead', null,
+                        React.createElement('tr', null,
+                            React.createElement('th', null, 'Url piece'),
+                            React.createElement('th', null, 'User editable'),
+                            React.createElement('th', null, 'Details')
+                        )
+                    ),
+                    React.createElement('tbody', null,
+                        React.createElement('tr', null,
+                            React.createElement('td', null, '/api'),
+                            React.createElement('td', null, React.createElement('input', { type: 'checkbox' })),
+                            React.createElement('td')
+                        ),
+                        React.createElement('tr', null,
+                            React.createElement('td', null, '/v1'),
+                            React.createElement('td', null, React.createElement('input', { type: 'checkbox' })),
+                            React.createElement('td')
+                        )
+                    )
+                ),
+                React.createElement('div', { className: 'sectionHeading' }, 'Step 2. Define any custom headings'),
+                React.createElement('div', { className: 'sectionContent' },
+                    React.createElement('h4', null, 'Current headers'),
+                    React.createElement('div', { className: 'row' },
+                        React.createElement('div', { className: 'column' },
+                            React.createElement('label', { htmlFor: 'app_id' }, 'Key'),
+                            React.createElement('input', { type: 'text', id: 'app_id', value: 'app_id' }),
+                        ),
+                        React.createElement('div', { className: 'column' },
+                            React.createElement('label', { htmlFor: 'app_id_value' }, 'Value'),
+                            React.createElement('input', { type: 'text', id: 'app_id_value', value: '/api' }),
+                        ),
+                        React.createElement('div', { className: 'column' }, 
+                            React.createElement('button', { type: 'button', className: 'remove' }, 'remove')
+                        )
+                    )
+                ),
+            ]
+        );
+
+        ReactDOM.render(
+            React.createElement(Content),
+            document.getElementById('root')
+        );
+    </script>
+</body>
+</html>
