@@ -248,5 +248,3 @@ const Content = () => {
 };
 
 ```
-
-Next: [CSS (Extract)](http://url.com)
