@@ -2,6 +2,7 @@ import React from 'react';
 import { Section } from './Section';
 import { TableRow } from './TableRow';
 import { Entry } from './Entry';
+import '../css/table.css';
 
 const Content = () => (
     <div className="content">
