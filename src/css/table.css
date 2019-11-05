@@ -4,9 +4,11 @@ table {
     margin: 10px 0;
 }
 th {
-    text-align: left
+    text-align: left;
+    padding: 10px;
+    background-color: #eee;
 }
-th, td {
-    padding: 5px;
-    border: 1px solid #cecece;
+td {
+    padding: 10px;
+    border-bottom: 1px solid #cecece;
 }

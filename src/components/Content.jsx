@@ -2,6 +2,7 @@ import React from 'react';
 import { Section } from './Section';
 import { TableRow } from './TableRow';
 import { Entry } from './Entry';
+import { TextInput } from './TextInput';
 import '../css/table.css';
 
 const Content = () => (
@@ -9,7 +10,7 @@ const Content = () => (
         <h2>Details for accessing the api</h2>
 
         <Section title="Step 1. Define the API URL">
-            <input type="text" placeholder="http://sample.com" />
+            <TextInput placeholder="http://sample.com" />
             <h3>Your URL is made up of these parts</h3>
             <p>Indicate which parts of the url will be controlled by the user using the buttons below.</p>
             <table>
@@ -31,7 +32,7 @@ const Content = () => (
             </table>
         </Section>
 
-        <Section title="Step 2. Define any custom headings">
+        <Section title="Step 2. Define any custom headers">
             <h4>Current headers</h4>
             <Entry id="1" key="app_id" value="/api" />
             <Entry id="2" key="app_key" value="753453453ae4234345" />

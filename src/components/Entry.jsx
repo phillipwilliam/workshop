@@ -1,17 +1,21 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { TextInput } from './TextInput';
+import { Button } from './Button';
 
 const Entry = ({ id, key, value }) => (
     <div className="row">
         <div className="column">
             <label htmlFor={`${id}-key`}>Key</label>
-            <input type="text" value={key} id={`${id}-key`} />
+            <TextInput value={key} id={`${id}-key`} />
         </div>
         <div className="column">
             <label htmlFor={`${id}-value`}>Value</label>
-            <input type="text" value={value} id={`${id}-value`} />
+            <TextInput value={value} id={`${id}-value`} />
         </div>
-        <div className="column"><button type="button" className="remove">remove</button></div>
+        <div className="column">
+            <Button className="remove"><span>remove</span></Button>
+        </div>
     </div>
 )
 
