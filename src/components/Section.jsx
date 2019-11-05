@@ -1,12 +1,15 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useState } from 'react';
 import PropTypes from 'prop-types';
 
-const Section = ({ title, children }) => (
-    <Fragment>
-        <div className="sectionHeading">{title}</div>
-        <div className="sectionContent">{children}</div>
-    </Fragment>
-);
+const Section = ({ title, children }) => {
+    const [visibility, toggleVisibility] = useState(true);
+    return (
+        <Fragment>
+            <div className="sectionHeading" onClick={() => toggleVisibility(!visibility)}>{title}</div>
+            { visibility && <div className="sectionContent">{children}</div> }
+        </Fragment>
+    )
+};
 
 Section.propTypes = {
     title: PropTypes.string.isRequired,
