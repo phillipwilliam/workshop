@@ -1,32 +1,39 @@
-## styled-component
+## webpack-dev-server
 
-You'll first need to install `styled-components`.
-
-```
-npm install --save styled-components
-```
-
-Now you can include the library in a component
-
-```javascript
-import styled from 'styled-components';
-
-const StyledDiv = styled.div`
-    width: 100%;
-    height: 40px;
-    padding: 10px;
-`;
-
-const Content = ({ children }) => (
-    <StyledDiv>{children}<StyledDiv>
-)
-```
-
-Run the application
+You'll first need to install `webpack-dev-server` and `html-webpack-plugin`.
 
 ```
-npm start
+npm install --save-dev webpack-dev-server html-webpack-plugin
+```
+
+**webpack.config.js**
+```
+const HtmlWebPackPlugin = require('html-webpack-plugin');
+
+devServer: {
+    contentBase: path.join(__dirname, '/dist'),
+    hot: true
+}
+...
+plugins: [
+    new HtmlWebPackPlugin({
+        template: process.cwd() + '/src/index.html',
+        filename: 'index.html'
+    })
+]
+```
+
+Remove the *base.css* from `index.html` and add it to `src/index.js`
+
+**src/index.js**
+
+```
+import './css/base.css';
 ```
 
 
-Next: [CSS (Extract)](http://url.com)
+Start the server
+
+```
+npx webpack-dev-server --config webpack.config.js
+```

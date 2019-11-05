@@ -28,7 +28,14 @@ module.exports = {
                     MiniCssExtractPlugin.loader,
                     'css-loader'
                 ]
-            }
+            },
+            {
+              test: /\.(jpe?g|png|gif|svg)$/i,
+              loader: [
+                  'file-loader?limit=100000',
+                  'img-loader'
+              ]
+          }
         ]
     },
     resolve: {
