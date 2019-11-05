@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Workshop</title>
+  <link rel="stylesheet" type="text/css" href="css/base.css" />
+</head>
+<body>
+    <div id="root"></div>
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <script>
+        const ce = React.createElement;
+        const Content = () => e('div', { className: 'content' },
+            [
+                ce('h2', null, 'Details for accessing the api'),
+                ce('div', { className: 'sectionHeading'}, 'Step 1. Define the API URL'),
+                ce('input', { type: 'text', placeholder: 'http://sample.com'  }),
+                ce('h3', null, 'Your URL is made up of these parts'),
+                ce('p', null, 'Indicate which parts of the url will be controlled by the user using the buttons below.'),
+                ce('table', null,
+                    ce('thead', null,
+                        ce('tr', null,
+                            ce('th', null, 'Url piece'),
+                            ce('th', null, 'User editable'),
+                            ce('th', null, 'Details')
+                        )
+                    ),
+                    ce('tbody', null,
+                        ce('tr', null,
+                            ce('td', null, '/api'),
+                            ce('td', null, ce('input', { type: 'checkbox' })),
+                            ce('td')
+                        ),
+                        ce('tr', null,
+                            ce('td', null, '/v1'),
+                            ce('td', null, ce('input', { type: 'checkbox' })),
+                            ce('td')
+                        )
+                    )
+                ),
+                ce('div', { className: 'sectionHeading' }, 'Step 2. Define any custom headings'),
+                ce('div', { className: 'sectionContent' },
+                    ce('h4', null, 'Current headers'),
+                    ce('div', { className: 'row' },
+                        ce('div', { className: 'column' },
+                            ce('label', { htmlFor: 'app_id' }, 'Key'),
+                            ce('input', { type: 'text', id: 'app_id', value: 'app_id' }),
+                        ),
+                        ce('div', { className: 'column' },
+                            ce('label', { htmlFor: 'app_id_value' }, 'Value'),
+                            ce('input', { type: 'text', id: 'app_id_value', value: '/api' }),
+                        ),
+                        ce('div', { className: 'column' }, 
+                            ce('button', { type: 'button', className: 'remove' }, 'remove')
+                        )
+                    )
+                ),
+            ]
+        );
+
+        ReactDOM.render(
+            ce(Content),
+            document.getElementById('root')
+        );
+    </script>
+</body>
+</html>
