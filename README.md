@@ -9,3 +9,5 @@
 - Webpack dev server - https://github.com/phillipwilliam/workshop/tree/06-webpack-dev-server
 - React hooks - https://github.com/phillipwilliam/workshop/tree/07-react-hooks 
 - Redux - https://github.com/phillipwilliam/workshop/tree/08-Redux
+- Redux Sagas - https://github.com/phillipwilliam/workshop/tree/09-Redux-Saga
+- React Redux - https://github.com/phillipwilliam/workshop/tree/10-React-Redux
