@@ -3,11 +3,11 @@ import PropTypes from 'prop-types';
 import { TextInput } from './TextInput';
 import { Button } from './Button';
 
-const Entry = ({ id, key, value }) => (
+const Entry = ({ id, label, value }) => (
     <div className="row">
         <div className="column">
             <label htmlFor={`${id}-key`}>Key</label>
-            <TextInput value={key} id={`${id}-key`} />
+            <TextInput value={label} id={`${id}-key`} />
         </div>
         <div className="column">
             <label htmlFor={`${id}-value`}>Value</label>
@@ -21,7 +21,7 @@ const Entry = ({ id, key, value }) => (
 
 Entry.propTypes = {
     id: PropTypes.string.isRequired,
-    key: PropTypes.string.isRequired,
+    label: PropTypes.string.isRequired,
     value: PropTypes.string.isRequired
 }
 

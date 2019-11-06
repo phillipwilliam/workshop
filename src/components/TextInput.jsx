@@ -2,14 +2,23 @@ import React, { forwardRef } from 'react'
 import PropTypes from 'prop-types';
 import '../css/input.css';
 
-const TextInput = forwardRef(({ id, value, placeholder }, ref) => (
-    <input className="text" type="text" ref={ref} id={id} value={value} placeholder={placeholder} />
+const TextInput = forwardRef(({ id, value, placeholder, onChange }, ref) => (
+    <input
+        className="text"
+        type="text"
+        id={id}
+        ref={ref}
+        value={value}
+        onChange={({ target: { value }}) => onChange(value)}
+        placeholder={placeholder}
+    />
 ));
 
 TextInput.propTypes = {
-    id: PropTypes.string.isRequired,
+    id: PropTypes.string,
     value: PropTypes.string,
     placeholder: PropTypes.string,
+    onChange: PropTypes.func.isRequired,
     ref: PropTypes.oneOfType([
         PropTypes.func, 
         PropTypes.shape({ current: PropTypes.any })
@@ -17,9 +26,9 @@ TextInput.propTypes = {
 }
 
 TextInput.defaultProps = {
-    value: null,
-    placeholder: null,
-    ref: null
+    id: null,
+    value: '',
+    placeholder: null
 }
 
 export {

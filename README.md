@@ -1,150 +1,244 @@
-## Redux Sagas
+## React-Redux
 
-### Generators
-```javascript
-function* counter(a) {
-    yield a;
-    yield a + 10;
-    yield a + 20;
-    yield a + 30;
-    yield a + 40;
-}
-
-const count = counter(5);
-count.next();
+Install these packages to start
+```
+npm install --save redux react-redux redux-saga
+npm install --save-dev redux-devtools-extension
 ```
 
+### We will update the `Result.jsx` component to use Redux instead of React.useReducer()
+
+#### Create the api reducer
 ```javascript
-function* counter() {
-    yield 1;
-    yield 2;
-    yield 3;
-    return 4;
+// src/redux/api.js
+import axios from 'axios';
+import { takeLatest, put, call } from 'redux-saga/effects';
+
+// Give the actions descriptive names
+const API_REQUESTED = 'API_REQUESTED';
+const API_FAILED = 'API_FAILED';
+const API_SUCCEEDED = 'API_SUCCEEDED';
+
+const defaultState = {
+    loading: false,
+    error: true,
+    data: null
 }
 
-const iterator = counter();
-let result = iterator.next();
-while(!result.done) {
-    console.log(result);
-    result = iterator.next();
-}
-```
-
-### Sagas
-
-```javascript
-<script src="https://unpkg.com/redux-saga/dist/redux-saga.umd.min.js"></script>
-```
-
-#### Create a saga that logs all the ACTIONS
-
-```javascript
-// Create a saga middleware
-const sagaMiddleware = ReduxSaga.default();
-
-// Get 'take' Effect
-const { take } = ReduxSaga.effects;
-
-// Create a generator that will log all ACTIONS
-function* watchLogAction() {
-    while (true) {
-        const action = yield take('*');
-        console.log(action);
+// The reducer function will handle 3 actions
+const reducer = (state = defaultState, { type, data }) => {
+    switch (type) {
+        case API_REQUESTED:
+            return { ...state, loading: true }
+        case API_FAILED:
+                return { ...state, loading: false, error: true }
+        case API_SUCCEEDED:
+            return { ...state, loading: false, data }
+        default:
+            return state;
     }
 }
 
-// Include Redux.applyMiddleware(sagaMiddleware) as the third arg
-const store = Redux.createStore(counter, 0, Redux.applyMiddleware(sagaMiddleware));
+const actionCreators = {
+    apiRequested({ url }) {
+        return {
+            type: API_REQUESTED,
+            url
+        };
+    },
+    apiFailed() {
+        return {
+            type: API_FAILED
+        };
+    },
+    apiSucceeded({ data }) {
+        return {
+            type: API_SUCCEEDED,
+            data
+        };
+    }
+};
 
-// Register the watchLogAction generator
-sagaMiddleware.run(watchLogAction);
+// Generator that will make the api request and dispatches API_FAILED/API_SUCCEEDED
+function* apiRequest({ url }) {
+    try {
+        const { data } = yield call(axios.get, url);
+        yield put(actionCreators.apiSucceeded({ data }));
+    } catch (error) {
+        yield put(actionCreators.apiFailed());
+    }
+}
+
+// Generator that will watch for the API_REQUESTED action
+function* watchForApiRequests() {
+    yield takeLatest(API_REQUESTED, apiRequest);
+}
+
+export {
+    reducer as default,
+    actionCreators,
+    watchForApiRequests
+};
 ```
-
-#### Replace the 'Increment async' dispatch to use the delay(1000) effect instead of setTimeout(() => {}, 1000)
 
 ```javascript
-const { take, put, delay, takeEvery } = ReduxSaga.effects;
+// src/redux/reducer.js
+import { combineReducers } from 'redux';
+import api from './api';
 
-// Create a generator that waits for 1000ms before dispatching "INCREMENT" action
-function* delayIncrement(action) {
-    yield delay(1000);
-    yield put({ type: 'INCREMENT' });
-}
-
-// Create a generator that watches for the "INCREMENT_ASYNC" action and calls delayIncrement()
-function* watchIncrementAsync() {
-    yield takeEvery('INCREMENT_ASYNC', delayIncrement);
-}
-
-// Register the watchIncrementAsync generator
-sagaMiddleware.run(watchIncrementAsync);
-
-// Update 'incrementAsync' button to dispatch "INCREMENT_ASYNC" action
-document.getElementById('incrementAsync')
-    .addEventListener('click', function () {
-        store.dispatch({ type: 'INCREMENT_ASYNC' });
-    })
+export default combineReducers({
+    api
+});
 ```
 
-#### Update the example above and replace takeEvery() with takeLatest()
+```javascript
+// src/redux/sagas.js
+import { all } from 'redux-saga/effects';
+import { watchForApiRequests } from './api';
 
-`takeEvery()` will run all the requested tasks while `takeLatest()` will cancel the previous tasks and execute the last task
-Click the 'Increment async' button multiple times rapidly and compare the click counter.
+export default function* rootSaga() {
+    yield all([
+        watchForApiRequests()
+    ]);
+}
+```
+
+```javascript
+// src/redux/store.js
+import { createStore, compose, applyMiddleware } from 'redux';
+import createSagaMiddleware from 'redux-saga';
+import reducer from './reducer';
+import sagas from './sagas';
+
+const sagaMiddleware = createSagaMiddleware();
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const store = createStore(reducer, composeEnhancers(applyMiddleware(sagaMiddleware)));
+
+sagaMiddleware.run(sagas);
+
+export {
+    store
+};
+```
+
+```javascript
+// src/containers/Content.jsx
+import { connect } from 'react-redux';
+import { actionCreators } from '../redux/api';
+import { Content as ContentBase } from '../components/Content';
+
+const mapStateToProps = ({ api: { loading, error, data } }) => ({ loading, error, data });
+
+const mapDispatchToProps = dispatch => ({
+    getApi: ({ url }) => dispatch(actionCreators.apiRequested({ url }))
+});
+
+const Content = connect(mapStateToProps, mapDispatchToProps)(ContentBase);
+
+export {
+    Content
+};
+```
 
 ``` javascript
-const { take, put, delay, takeEvery, takeLatest } = ReduxSaga.effects;
+// src/containers/Results.jsx
+import { connect } from 'react-redux';
+import { Result as ResultBase } from '../components/Result';
 
-// Compare the click counter with 
-function* watchIncrementAsync() {
-    yield takeLatest('INCREMENT_ASYNC', delayIncrement);
-}
+const mapStateToProps = ({ api: { data } }) => ({ data });
+
+const Result = connect(mapStateToProps)(ResultBase);
+
+export {
+    Result
+};
 ```
 
-#### Throttle the number of times the dispatch task on '+' button should be executed
-
-``` javascript
-const { take, put, delay, takeEvery, takeLatest, throttle } = ReduxSaga.effects;
-
-// Create a generator with a 2000ms window between each 'INCREMENT' dispatch
-function* watchIncrementThrottled() {
-    yield throttle(2000, 'INCREMENT_THROTTLED', function*() {
-        yield put({ type: 'INCREMENT' })
-    })
-}
-// Update the button to dispatch INCREMENT_THROTTLED action
-document.getElementById('increment')
-    .addEventListener('click', function () {
-        store.dispatch({ type: 'INCREMENT_THROTTLED' })
-    })
-```
-
-#### Get the winner of 2 parallel requests with the race() effect
 ```javascript
-const { take, put, call, delay, takeEvery, takeLatest, throttle, race } = ReduxSaga.effects;
+// src/components/Result.jsx
+import React, { Fragment } from 'react';
+import { TextInput } from './TextInput';
 
-// Add mock api that has a 3000ms delay before returning a payload
-function* mockApi() {
-    yield delay(3000); // Change this delay ms to win
-    return { payload: 'data' };
-}
+const Result = ({ data }) => (
+    data && (
+        <div className="result">
+            <Fragment>
+            <h3>Output from api</h3>
+            {
+                Object.entries(data).map(([key, value]) => (
+                    <div key={key}>{key}: <TextInput value={value} /></div>
+                ))
+            }
+            </Fragment>
+        </div>
+    )
+);
 
-// Generator that uses the race() effect. When the winner is returned, the remaining effects are cancelled
-function* raceAgainstTime() {
-    // 
-    const { result, timeout } = yield race({
-        result: call(mockApi),
-        timeout: delay(2000)
-    })
+export {
+    Result
+};
 
-    if (result) {
-        yield put({ type: 'REQUEST_COMPLETED', result });
-    }
+```
 
-    if (timeout) {
-        yield put({ type: 'REQUEST_TIMED_OUT' });
-    }
-}
+```javascript
+// src/components/Content.jsx
+import React from 'react';
+import { Section } from './Section';
+import { TableRow } from './TableRow';
+import { Entry } from './Entry';
+import { TextInput } from './TextInput';
+import { Result } from '../containers/Result';
+import '../css/table.css';
 
-// Register the raceAgainstTime generator
-sagaMiddleware.run(raceAgainstTime);
+const Content = ({ getApi }) => {
+    const [url, setUrl] = React.useState('');
+
+    return (
+        <div className="content">
+            <h2>Details for accessing the api</h2>
+
+            <Section title="Step 1. Define the API URL">
+                <TextInput value={url} onChange={setUrl} placeholder="https://jsonplaceholder.typicode.com/todos/1" />
+                <h3>Your URL is made up of these parts</h3>
+                <p>Indicate which parts of the url will be controlled by the user using the buttons below.</p>
+                <table>
+                    <TableRow>
+                        <th>Url piece</th>
+                        <th>User editable</th>
+                        <th>Details</th>
+                    </TableRow>
+                    <TableRow>
+                        <td>/api</td>
+                        <td><input type="checkbox" /></td>
+                        <td></td>
+                    </TableRow>
+                    <TableRow>
+                        <td>/v1</td>
+                        <td><input type="checkbox" /></td>
+                        <td></td>
+                    </TableRow>
+                </table>
+            </Section>
+
+            <Section title="Step 2. Define any custom headers">
+                <h4>Current headers</h4>
+                <Entry id="1" label="app_id" value="/api" />
+                <Entry id="2" label="app_key" value="753453453ae4234345" />
+            </Section>
+
+            <button type="button" className="connect" onClick={() => getApi({ url })}>
+                Connect to API
+            </button>
+
+            <Result />
+        </div>
+    )
+};
+
+export { Content };
+```
+
+Run this to start the application
+```
+npm start
 ```
