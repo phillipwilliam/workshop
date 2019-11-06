@@ -16,8 +16,7 @@ const reducer = (state, { type, data }) => {
     }
 }
 
-const Result = () => {
-    const url = React.useContext(GonContext);
+const Result = ({ url }) => {
     const [state, dispatch] = useReducer(reducer, {
         loading: false,
         error: true,
@@ -25,6 +24,7 @@ const Result = () => {
     });
 
     React.useEffect(() => {
+        if (!url) { return }
         const getData = async (url) => {
             dispatch({ type: "LOADING" })
             try {
